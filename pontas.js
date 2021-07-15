@@ -7,12 +7,12 @@ function carregarPontas(app) {
     console.log("Carregando pontas...");
 
     // Cadastrar usuario
-    console.log(local + "login/cadastro");
-    app.route(local + "/login/cadastro").post(cadastro.cadastrar)
+    console.log(local + "/login/cadastro");
+    cadastro.cadastraPonta(app, local + "/login/cadastro")
 
     // Logar usuario
-    console.log(local + "login/logar");
-    app.route(local + "/login/logar").post(login.logar)
+    console.log(local + "/login/logar");
+    login.cadastraPonta(app, local + "/login/logar")
 }
 
 module.exports = { carregarPontas }

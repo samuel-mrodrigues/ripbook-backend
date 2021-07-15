@@ -18,12 +18,13 @@ app.linkapi = linkapi
 // -----
 var mysql = require("./conexao/conexao")
 var pontas = require("./pontas")
+var erros = require("./erros")
 
-app.conexao = mysql
+app.bancodados = mysql
+app.erros = erros;
 
 // -----
 pontas.carregarPontas(app)
-// app.post("/api/cadastro", (req, resp) => {
-//     resp.send("Recebi sua request")
-// })
+
+// ------
 app.listen(8081)
