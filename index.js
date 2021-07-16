@@ -18,10 +18,13 @@ app.linkapi = linkapi
 // -----
 var mysql = require("./conexao/conexao")
 var pontas = require("./pontas")
-var erros = require("./erros")
+var erros = require("./erros");
+var sessao = require("./sessao")
 
 app.bancodados = mysql
 app.erros = erros;
+app.sessao = sessao
+app.sessao.setBanco(app.bancodados)
 
 // -----
 pontas.carregarPontas(app)

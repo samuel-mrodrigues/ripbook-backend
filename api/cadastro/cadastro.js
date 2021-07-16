@@ -1,3 +1,11 @@
+// Regras de login
+// nome: Minimo 2 chars
+// sobrenome: Minimo de 3 chars
+// email: Minimo de 6 chars e conter um @
+// senha: Minimo de 6 chars e maximo de 15
+
+const { isStringVazio } = require("../../validacoesBasicas")
+
 async function cadastraPonta(app, ponta) {
     let msgErros = app.erros.login.cadastro
 
@@ -9,15 +17,14 @@ async function cadastraPonta(app, ponta) {
         //     email: "",
         //     senha: ""
         // }
-        //Status do login:
+        //Status do cadastro:
         // 0: Cadastro aprovado
         // 1: Cadastro negado
-        // Codigos de Erros.
-        // 1: Nome invalido
         let dados = { ...req.body }
         let erros = []
         console.log(dados);
 
+        // Validação dos campos
         // Codigo de erro: 1
         if (!nomeValido(dados.nome)) {
             console.log("Nome invalido:");
@@ -44,9 +51,11 @@ async function cadastraPonta(app, ponta) {
 
         let resposta = {}
         console.log("Total de erros encontrados: " + erros.length);
+        // Se não tiver erro na validação, procede na consulta ao banco
         //Formular a resposta. 0 = Sucesso, 1= Erro
         if (erros.length == 0) {
             resposta.status = 0
+            resposta.mensagem = "Sucesso no cadastro"
 
             let usuario = await app.bancodados("usuarios").where({ email: dados.email }).first()
             if (!usuario) {
@@ -54,7 +63,6 @@ async function cadastraPonta(app, ponta) {
 
                 await app.bancodados("usuarios").insert(dados).then(_ => {
                     console.log("Inserido com sucesso!");
-                    resposta.mensagem = "Sucesso no cadastro"
                 }).catch(_ => {
                     console.log("Erro ao inserir:");
                     console.log(_);
@@ -64,9 +72,12 @@ async function cadastraPonta(app, ponta) {
             } else {
                 console.log("Novo cadastro com um e-mail existente!: " + dados.email);
                 erros.push(6)
+                resposta.status = 1;
+                resposta.mensagem = "E-mail informado já em uso"
             }
         } else {
             resposta.status = 1
+            resposta.mensagem = "Validação dos campos informados não aprovada"
         }
 
         resposta.erros = {}
@@ -78,37 +89,30 @@ async function cadastraPonta(app, ponta) {
     })
 }
 
-function isVazio(algo) {
-    if (algo == null) return true;
-    if (typeof algo == String && algo.length == 0) return true;
-
-    return false;
-}
-
 function nomeValido(nome) {
-    if (isVazio(nome)) return false;
+    if (isStringVazio(nome)) return false;
     if (nome.length <= 2) return false;
 
     return true
 }
 
 function sobrenomeValido(sobrenome) {
-    if (isVazio(sobrenome)) return false;
+    if (isStringVazio(sobrenome)) return false;
     if (sobrenome.length <= 3) return false;
 
     return true;
 }
 
 function emailValido(email) {
-    if (isVazio(email)) return false;
-    if (email.length <= 5) return false;
+    if (isStringVazio(email)) return false;
+    if (email.length <= 6) return false;
     if (email.indexOf("@") == -1) return false;
 
     return true;
 }
 
 function senhaValida(senha) {
-    if (isVazio(senha)) return false;
+    if (isStringVazio(senha)) return false;
     if (senha.length < 6) return false
 
     return true;

@@ -26,6 +26,15 @@ module.exports = {
             },
             2: {
                 mensagem: "Senha incorreta"
+            },
+            3: {
+                mensagem: "E-mail nao atende aos requisitos"
+            },
+            4: {
+                mensagem: "Senha nao atende aos requisitos"
+            },
+            5: {
+                mensagem: "Erro ao criar sua sessão"
             }
         }
     }

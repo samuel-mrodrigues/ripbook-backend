@@ -14,6 +14,7 @@ module.exports = {
   },
   migrations: {
     tableName: 'knex_migrations',
-
-  }
+    directory: "./conexao/migrations"
+  },
+  
 };
