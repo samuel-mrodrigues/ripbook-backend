@@ -47,6 +47,19 @@ module.exports = {
             3: {
                 mensagem: "Nenhum cookie de sessão recebido"
             }
+        },
+        logout: {
+            1: {
+                mensagem: "Sessão informada não existe, logout falhou."
+            }
+        }
+    },
+    posts: {
+        1: {
+            mensagem: "Campos informados invalidos"
+        },
+        2: {
+            mensagem: "É necessario estar logado para realizar essa ação"
         }
     }
 }

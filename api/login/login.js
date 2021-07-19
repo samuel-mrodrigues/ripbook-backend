@@ -48,7 +48,6 @@ async function cadastraPontaLogin(app, ponta) {
         // Se não tiver erro na validação, procede na consulta ao banco
         //Formular a resposta. 0 = Sucesso, 1= Erro
         if (erros.length == 0) {
-            resposta.status = 0
             resposta.mensagem = "Login aprovado"
 
             let usuario = await app.bancodados("usuarios").where({ email: dados.email }).first()
@@ -60,6 +59,7 @@ async function cadastraPontaLogin(app, ponta) {
                     console.log("Login pre-aprovado, gerando sessão...");
 
                     let dadosDaSessao = await app.sessao.gerarSessao(usuario)
+                    console.log("Sessão gerada: " + dadosDaSessao.sessao_id);
                     if (dadosDaSessao) {
                         resp.cookie("sessaoID",
                             dadosDaSessao.sessao_id, {

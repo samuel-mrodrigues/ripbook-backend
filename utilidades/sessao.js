@@ -49,12 +49,27 @@ async function gerarSessao(usuarioDados) {
     return dadosInsercao
 }
 
+async function getDadosUsuario(cookieSessao) {
+    let dados = {}
+
+    let sessao = await banco("sessoes").where({ sessao_id: cookieSessao }).first()
+    if (sessao) {
+        let usuario = await banco("usuarios").where({ id_usuario: sessao.usuario_id }).first()
+
+        dados.sessao = { ...sessao }
+        dados.usuario = { ...usuario }
+
+        return dados
+    }
+}
+
 function setBanco(novoBanco) {
     banco = novoBanco
 }
 
+
 function gerarStringAleatoria(quantosChars) {
-    let chars = "abcdefghijklmnopqrstuvwxyz123456789/=-)(@!_$#"
+    let chars = "abcdefghijklmnopqrstuvwxyz123456789().!-"
     let stringAleatoria = ""
 
     for (let index = 0; index <= quantosChars; index++) {
@@ -68,4 +83,4 @@ function gerarStringAleatoria(quantosChars) {
     return stringAleatoria
 }
 
-module.exports = { gerarSessao, setBanco }
+module.exports = { gerarSessao, setBanco, getDadosUsuario }
