@@ -4,12 +4,13 @@
 // email: Minimo de 6 chars e conter um @
 // senha: Minimo de 6 chars e maximo de 15
 
-const { isStringVazio } = require("../../validacoesBasicas")
+const { isStringVazio } = require("../../utilidades/validacoesBasicas")
 
 async function cadastraPonta(app, ponta) {
+    console.log(local + "/login/cadastro");
     let msgErros = app.erros.login.cadastro
 
-    app.post(ponta, async (req, resp) => {
+    app.post(ponta, async(req, resp) => {
         console.log("Nova request para cadastro!");
         // JSON: {
         //     nome: "",
@@ -20,7 +21,7 @@ async function cadastraPonta(app, ponta) {
         //Status do cadastro:
         // 0: Cadastro aprovado
         // 1: Cadastro negado
-        let dados = { ...req.body }
+        let dados = {...req.body }
         let erros = []
         console.log(dados);
 

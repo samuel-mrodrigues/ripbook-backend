@@ -1,18 +1,18 @@
 // Cadastro
-const cadastro = require("./api/cadastro/cadastro.js")
-const login = require("./api/login/login.js")
+const cadastro = require("./cadastro/cadastro.js")
+const login = require("./login/login.js")
 
 function carregarPontas(app) {
     local = app.linkapi
     console.log("Carregando pontas...");
 
     // Cadastrar usuario
-    console.log(local + "/login/cadastro");
     cadastro.cadastraPonta(app, local + "/login/cadastro")
 
     // Logar usuario
-    console.log(local + "/login/logar");
-    login.cadastraPonta(app, local + "/login/logar")
+    login.cadastraPontaLogin(app, local + "/login/logar")
+        // Login por cookie
+    login.cadastraPontaCookie(app, local + "/login/logar/cookie")
 }
 
 module.exports = { carregarPontas }

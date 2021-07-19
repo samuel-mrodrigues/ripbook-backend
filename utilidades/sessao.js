@@ -24,7 +24,7 @@ async function gerarSessao(usuarioDados) {
 
     // Fazer a verificação caso o usuario já tenha uma sessão
     let existeSessao = await banco("sessoes").where({ usuario_id: usuarioDados.id_usuario }).first()
-    if (existeSessao != undefined) {
+    if (existeSessao) {
         console.log("Usuario " + usuarioDados.email + " já possui uma sessao, substituindo a antiga...");
 
         let atualizarSessao = await banco("sessoes").update({
@@ -32,11 +32,18 @@ async function gerarSessao(usuarioDados) {
             validade: dadosInsercao.validade
         }).where({ usuario_id: dadosInsercao.usuario_id })
 
-        dadosInsercao.existente = true
+        if (atualizarSessao) {
+            dadosInsercao.existente = true
+        } else {
+            return null
+        }
     } else {
-        console.log(`Cadastrando nova sessão para o usuario ${dadosInsercao.email}`);
+        console.log(`Cadastrando nova sessão para o usuario ${usuarioDados.email}`);
         let resultadoInsercao = await banco("sessoes").insert(dadosInsercao)
-        
+
+        if (!resultadoInsercao) {
+            return null
+        }
     }
 
     return dadosInsercao

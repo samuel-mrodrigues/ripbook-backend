@@ -5,11 +5,20 @@ const app = require("express")()
 
 // -----
 const cors = require("cors")
-const bodyparser = require("body-parser")
+let corsOrigem = {
+    origin: "http://localhost:8080",
+    credentials: true
+}
 
-// -----
-app.use(cors())
+const bodyparser = require("body-parser")
+const cookie = require("cookie-parser")
+
+// Usar cors para permitir requisições 
+app.use(cors(corsOrigem))
+    // Dar parse no body das requisições json
 app.use(bodyparser.json())
+    // Dar parse nos cookies
+app.use(cookie())
 
 // -----
 const linkapi = "/api"
@@ -17,9 +26,9 @@ app.linkapi = linkapi
 
 // -----
 var mysql = require("./conexao/conexao")
-var pontas = require("./pontas")
-var erros = require("./erros");
-var sessao = require("./sessao")
+var pontas = require("./api/pontas")
+var erros = require("./utilidades/erros");
+var sessao = require("./utilidades/sessao")
 
 app.bancodados = mysql
 app.erros = erros;

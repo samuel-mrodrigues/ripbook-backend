@@ -36,6 +36,17 @@ module.exports = {
             5: {
                 mensagem: "Erro ao criar sua sessão"
             }
+        },
+        logar_com_cookie: {
+            1: {
+                mensagem: "Sessão não existe"
+            },
+            2: {
+                mensagem: "Sessão expirada"
+            },
+            3: {
+                mensagem: "Nenhum cookie de sessão recebido"
+            }
         }
     }
 }
