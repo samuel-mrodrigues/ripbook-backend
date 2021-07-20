@@ -24,7 +24,7 @@ async function carregarPontas(app) {
     logout.cadastrarPonta(app, local + "/login/logout")
 
     // Postar algo/Pegar algum post/Posts
-    posts.cadastraPonta(app, local + "/post")
+    posts.cadastraPonta(app, local + "/posts")
 }
 
 module.exports = { carregarPontas }

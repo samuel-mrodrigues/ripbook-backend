@@ -7,7 +7,7 @@
 const { isStringVazio } = require("../../utilidades/validacoesBasicas")
 
 async function cadastraPonta(app, ponta) {
-    console.log(local + "/login/cadastro");
+    console.log("POST " + local + "/login/cadastro");
     let msgErros = app.erros.login.cadastro
 
     app.post(ponta, async(req, resp) => {

@@ -7,7 +7,7 @@ const { isStringVazio } = require("../../utilidades/validacoesBasicas")
 
 // Ponta de login por dados do formulario
 async function cadastraPontaLogin(app, ponta) {
-    console.log(local + "/login/logar");
+    console.log("POST " + local + "/login/logar");
     let msgErros = app.erros.login.logar
 
     app.post(ponta, async(req, resp) => {
@@ -103,7 +103,7 @@ async function cadastraPontaLogin(app, ponta) {
 async function cadastraPontaCookie(app, ponta) {
     let msgErros = app.erros.login.logar_com_cookie
 
-    console.log(local + "/login/logar/cookie");
+    console.log("GET " + local + "/login/logar/cookie");
     app.get(ponta, async(req, resp) => {
         console.log("Nova requisição de login por cookie");
         console.log(req.cookies);

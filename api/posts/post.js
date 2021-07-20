@@ -1,32 +1,58 @@
 
+let Erro = require("../erro")
+let Resposta = require("../resposta")
+
 async function cadastraPonta(app, ponta) {
     cadastraPost(app, ponta)
     cadastraGet(app, ponta)
+    cadastraGetParametro(app, ponta)
+}
+
+function cadastraGetParametro(app, ponta) {
+    console.log("GET " + local + "/posts/:id");
+    app.get(ponta + "/:id", (req, resp) => {
+        let erros = new Erro(app.erros.posts)
+        
+        let postRequis = req.params.id
+        
+        if (!isNaN(postRequis)) {
+            console.log("ID valido informado");
+        } else {
+            console.log("Erro, ID informado não é um numero");
+            erros.addErro(3)
+        }
+        let resposta = new Resposta(erros.getErros())
+        
+        console.log(resposta.getResposta("Sucesso", "Erro"));
+        resp.send("")
+    })
 }
 
 function cadastraGet(app, ponta) {
-    console.log("GET " + local + "/post");
+    console.log("GET " + local + "/posts");
 
     app.get(ponta, async (req, resp) => {
         console.log("Novo GET de posts");
 
         let posts = await app.bancodados("posts")
-        console.log(posts);
+        // console.log(posts);
 
-        let resposta = {}
+        let resposta = []
+        for (const key in posts) {
+            if (Object.hasOwnProperty.call(posts, key)) {
+                const post = posts[key];
 
-        for (const post of posts) {
-            resposta[post.id_post] = { ...post }
+                resposta.push({ ...post })
+            }
         }
 
         console.log(resposta);
-
         resp.send(resposta)
     })
 }
 
 function cadastraPost(app, ponta) {
-    console.log("POST " + local + "/post");
+    console.log("POST " + local + "/posts");
 
     app.post(ponta, async (req, resp) => {
         let msgErros = app.erros.posts

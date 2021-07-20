@@ -60,6 +60,9 @@ module.exports = {
         },
         2: {
             mensagem: "É necessario estar logado para realizar essa ação"
+        }, 
+        3: {
+            mensagem: "O ID do post requisitado precisa ser numerico"
         }
     }
 }

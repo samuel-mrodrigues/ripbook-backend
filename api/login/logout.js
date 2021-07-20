@@ -1,6 +1,7 @@
 async function cadastrarPonta(app, ponta) {
     
     app.post(ponta, async (req, resp) => {
+        console.log("POST " + local + "/login/logout");
         let msgErros = app.erros.login.logout
         console.log("Nova request de logout!");
         let dados = req.body
