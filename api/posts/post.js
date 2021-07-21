@@ -1,5 +1,4 @@
 
-let Erro = require("../erro")
 let Resposta = require("../resposta")
 
 async function cadastraPonta(app, ponta) {
@@ -8,28 +7,49 @@ async function cadastraPonta(app, ponta) {
     cadastraGetParametro(app, ponta)
 }
 
+
 function cadastraGetParametro(app, ponta) {
-    console.log("GET " + local + "/posts/:id");
-    app.get(ponta + "/:id", (req, resp) => {
-        let erros = new Erro(app.erros.posts)
-        
+    console.log(`GET ${app.url}${ponta}/:id`);
+
+    app.get(ponta + "/:id", async (req, resp) => {
+
+        let resposta = new Resposta(app.erros.posts)
         let postRequis = req.params.id
-        
+
+        console.log(req.sessao);
+
+        console.log(resposta);
+        // if (req.sessao != undefined) {
         if (!isNaN(postRequis)) {
             console.log("ID valido informado");
+
+            let postDados = await app.bancodados("posts").where({ id_post: postRequis }).first()
+            let postDono = await app.bancodados("usuarios").where({ id_usuario: postDados.usuario_id }).first()
+            if (postDados) {
+                resposta.addDados("post", { ...postDados })
+                resposta.addDados("postdono", { id_usuario: postDono.id_usuario, nome: postDono.nome, sobrenome: postDono.sobrenome})
+                resposta.SetRetornarData(true)
+                resposta.aprovada("Sucesso")
+            } else {
+                resposta.addErro(4)
+                resposta.recusada("Post solicitado não existe")
+            }
         } else {
             console.log("Erro, ID informado não é um numero");
-            erros.addErro(3)
+            resposta.addErro(1)
+            resposta.recusada("Dados informados invalidos")
         }
-        let resposta = new Resposta(erros.getErros())
-        
-        console.log(resposta.getResposta("Sucesso", "Erro"));
-        resp.send("")
+        // } else {
+        //     resposta.addErro(2)
+        //     resposta.recusada("Solicitação não permitida")
+        // }
+
+        resp.send(resposta.getResposta())
     })
 }
 
 function cadastraGet(app, ponta) {
-    console.log("GET " + local + "/posts");
+    console.log(`GET ${app.url}${ponta}`);
 
     app.get(ponta, async (req, resp) => {
         console.log("Novo GET de posts");
@@ -52,48 +72,34 @@ function cadastraGet(app, ponta) {
 }
 
 function cadastraPost(app, ponta) {
-    console.log("POST " + local + "/posts");
-
+    console.log(`POST ${app.url}${ponta}`);
     app.post(ponta, async (req, resp) => {
-        let msgErros = app.erros.posts
-
         console.log("Nova request de postagem!");
-        let cookieSessao = req.cookies.sessaoID
 
+        let resposta = new Resposta(app.erros.posts, false)
         let dados = req.body
-
-        let resposta = {}
-        resposta.status = 1
-
-        let erros = []
+        let cookieSessao = req.cookies.sessaoID
 
         if (estaVazio(dados.comentario)) {
             console.log("Campo de post não validado");
-            erros.push(1)
-            resposta.mensagem = "Campos invalidos"
+            resposta.addErro(1)
+            resposta.recusada("Solicitação faltando parametros...")
         }
 
-        if (erros.length == 0) {
+        let totalErros = resposta.getErros().length
+        if (totalErros == 0) {
             let userData = await app.sessao.getDadosUsuario(cookieSessao);
-            console.log(userData);
+            let postagem = await app.bancodados("posts").insert({ usuario_id: userData.sessao.usuario_id, conteudo_post: dados.comentario })
+            console.log(postagem);
 
-            if (userData) {
-                let postagem = await app.bancodados("posts").insert({ usuario_id: userData.sessao.usuario_id, conteudo_post: dados.comentario })
-                console.log(postagem);
-
-                resposta.status = 0
-                resposta.mensagem = "Postagem realizada com sucesso"
+            if (postagem != undefined) {
+                resposta.aprovada("Postagem concluida")
             } else {
-                erros.push(2)
+                resposta.recusada("Erro interno")
             }
         }
 
-        resposta.erros = {}
-        erros.forEach(codErro => {
-            resposta.erros[codErro] = msgErros[codErro].mensagem
-        })
-
-        resp.send(resposta)
+        resp.send(resposta.getResposta())
     })
 }
 

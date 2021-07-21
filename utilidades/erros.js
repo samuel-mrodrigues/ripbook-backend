@@ -63,6 +63,9 @@ module.exports = {
         }, 
         3: {
             mensagem: "O ID do post requisitado precisa ser numerico"
+        },
+        4: {
+            mensagem: "Post requisitado não existe"
         }
     }
 }

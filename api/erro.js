@@ -19,15 +19,12 @@ class Erro {
             this.erros.splice(index, 1)
         }
     }
-    zerar() {
-        this.erros = []
-    }
 
     getMensagens() {
         return this.mensagens
     }
 
-    getErros() {
+    getErrosFormatados() {
         let msgErros = {}
         this.erros.forEach(codErro => {
             msgErros[codErro] = this.mensagens[codErro].mensagem
@@ -35,6 +32,11 @@ class Erro {
 
         return msgErros;
     }
+
+    getErros() {
+        return this.erros;
+    }
+
 }
 
 module.exports = Erro

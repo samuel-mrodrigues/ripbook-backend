@@ -4,13 +4,14 @@
 
 
 const { isStringVazio } = require("../../utilidades/validacoesBasicas")
+let Resposta = require("../resposta")
 
 // Ponta de login por dados do formulario
 async function cadastraPontaLogin(app, ponta) {
-    console.log("POST " + local + "/login/logar");
-    let msgErros = app.erros.login.logar
+    console.log(`POST ${app.url}${ponta}`);
 
-    app.post(ponta, async(req, resp) => {
+    app.post(ponta, async (req, resp) => {
+        let resposta = new Resposta(app.erros.login.logar, false)
         console.log("Nova request para login!");
         // JSON: {
         //     email: "",
@@ -21,37 +22,32 @@ async function cadastraPontaLogin(app, ponta) {
         // 0: Login aprovado
         // 1: Login negado
 
-        let dados = {...req.body };
-        let erros = []
-        console.log(dados);
+        console.log(req.xablau);
+
+        let dados = { ...req.body };
 
         // Validação dos campos
         // Codigo do erro: 3
         if (!emailValido(dados.email)) {
             console.log("Email invalido!");
-            erros.push(3)
+            resposta.addErro(3)
         }
 
         // Codigo do erro 4
         if (!senhaValida(dados.senha)) {
             console.log("Senha invalida!");
-            erros.push(4)
+            resposta.addErro(4)
         }
 
-        let resposta = {}
-            // Status do login
-            // 0: Login aprovado
-            // 1: Login recusado
-        resposta.status = 1;
-        console.log("Total de erros encontrados: " + erros.length);
+        let totalErros = resposta.getErros().length
+        console.log("Total de erros encontrados: " + totalErros);
 
         // Se não tiver erro na validação, procede na consulta ao banco
         //Formular a resposta. 0 = Sucesso, 1= Erro
-        if (erros.length == 0) {
-            resposta.mensagem = "Login aprovado"
-
+        if (totalErros == 0) {
             let usuario = await app.bancodados("usuarios").where({ email: dados.email }).first()
             console.log(usuario);
+
             if (usuario) {
                 console.log("Usuario existe!");
 
@@ -60,64 +56,53 @@ async function cadastraPontaLogin(app, ponta) {
 
                     let dadosDaSessao = await app.sessao.gerarSessao(usuario)
                     console.log("Sessão gerada: " + dadosDaSessao.sessao_id);
+
                     if (dadosDaSessao) {
                         resp.cookie("sessaoID",
                             dadosDaSessao.sessao_id, {
-                                expires: new Date(parseInt(dadosDaSessao.validade)),
-                                path: "/"
-                            })
+                            expires: new Date(parseInt(dadosDaSessao.validade)),
+                            path: "/"
+                        })
 
                         if (dadosDaSessao.existente) {
                             console.log("Usuario já tinha uma sessão, a antiga foi substituida...");
                         }
 
-                        resposta.status = 0
+                        resposta.aprovada("Login aprovado")
                     } else {
                         console.log("Erro ao gerar sessão para usuario");
-                        erros.push(5)
-                        resposta.mensagem = "Erro interno no servidor."
+                        resposta.addErro(5)
+                        resposta.recusada("Erro interno do servidor")
                     }
                 } else {
-                    erros.push(2)
-                    resposta.mensagem = "Senha incorreta para esse e-mail"
+                    resposta.addErro(2)
                     console.log("Senha incorreta para esse e-mail");
+                    resposta.recusada("Senha incorreta")
                 }
             } else {
-                resposta.mensagem = "Email não existe"
-                erros.push(1)
+                resposta.addErro(1)
                 console.log("O usuario com esse e-mail não existe");
+                resposta.recusada("E-mail não existe")
             }
         } else {
-            resposta.mensagem = "Validação dos campos informados não aprovada"
+            resposta.recusada("Validação dos campos recusada")
         }
 
-        resposta.erros = {}
-        erros.forEach(codErro => {
-            resposta.erros[codErro] = msgErros[codErro].mensagem
-        })
-        resp.send(resposta)
+        resp.send(resposta.getResposta())
     })
 }
 
 // Ponta de login por cookie
 async function cadastraPontaCookie(app, ponta) {
-    let msgErros = app.erros.login.logar_com_cookie
-
-    console.log("GET " + local + "/login/logar/cookie");
-    app.get(ponta, async(req, resp) => {
+    console.log(`GET ${app.url}${ponta}`);
+    app.get(ponta, async (req, resp) => {
+        let resposta = new Resposta(app.erros.login.logar_com_cookie, false)
         console.log("Nova requisição de login por cookie");
         console.log(req.cookies);
 
-        let erros = []
-        let resposta = {}
-            // Status
-            // 0: Sessão aprovada
-            // 1: Sessão recusada
-        resposta.status = 1;
-
-        if (req.cookies.sessaoID != undefined) {
-            let cookieSessao = req.cookies.sessaoID;
-            console.log("Existe um cookie de sessãoID!");
+        if (req.sessao != undefined) {
+            let cookieSessao = req.sessao.sessao.sessao_id;
+            console.log("Existe um cookie de sessãoID: " + cookieSessao);
 
             console.log("Verificando se essa sessão ainda é valida");
             let sessaoNoBanco = await app.bancodados("sessoes").where({ sessao_id: cookieSessao }).first()
@@ -134,30 +119,24 @@ async function cadastraPontaCookie(app, ponta) {
 
                 if (dataSessao.getTime() >= dataAgora.getTime()) {
                     console.log("A sessão ainda é valida! Permitindo o login.");
-                    resposta.status = 0
-                    resposta.mensagem = "Cookie de sessão valido"
+                    resposta.aprovada("Login por cookie aprovado")
                 } else {
                     console.log("Sessão expirada!");
-                    erros.push(2)
-                    resposta.mensagem = "Cookie de sessão expirado"
+                    resposta.addErro(2)
+                    resposta.recusada("Sessão expirada")
                 }
             } else {
                 console.log("Esse cookie de sessão não existe, negando login...");
-                erros.push(1)
-                resposta.mensagem = "Cookie de sessão não existe"
+                resposta.addErro(1)
+                resposta.recusada("A sessão solicitada não existe.")
             }
         } else {
             // Erro por nao ter o cookie na requisição
-            erros.push(3)
-            resposta.mensagem = "Cookie de sessão não esta presente"
+            resposta.addErro(3)
+            resposta.recusada("Sessão não informada na requisição")
         }
 
-        resposta.erros = {}
-        erros.forEach(codErro => {
-            resposta.erros[codErro] = msgErros[codErro].mensagem
-        })
-
-        resp.send(resposta)
+        resp.send(resposta.getResposta())
     })
 }
 
