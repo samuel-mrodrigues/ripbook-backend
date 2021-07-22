@@ -10,7 +10,7 @@ let Resposta = require("../resposta")
 async function cadastraPontaLogin(app, ponta) {
     console.log(`POST ${app.url}${ponta}`);
 
-    app.post(ponta, async (req, resp) => {
+    app.post(ponta, async(req, resp) => {
         let resposta = new Resposta(app.erros.login.logar, false)
         console.log("Nova request para login!");
         // JSON: {
@@ -22,9 +22,7 @@ async function cadastraPontaLogin(app, ponta) {
         // 0: Login aprovado
         // 1: Login negado
 
-        console.log(req.xablau);
-
-        let dados = { ...req.body };
+        let dados = {...req.body };
 
         // Validação dos campos
         // Codigo do erro: 3
@@ -60,9 +58,9 @@ async function cadastraPontaLogin(app, ponta) {
                     if (dadosDaSessao) {
                         resp.cookie("sessaoID",
                             dadosDaSessao.sessao_id, {
-                            expires: new Date(parseInt(dadosDaSessao.validade)),
-                            path: "/"
-                        })
+                                expires: new Date(parseInt(dadosDaSessao.validade)),
+                                path: "/"
+                            })
 
                         if (dadosDaSessao.existente) {
                             console.log("Usuario já tinha uma sessão, a antiga foi substituida...");
@@ -95,7 +93,7 @@ async function cadastraPontaLogin(app, ponta) {
 // Ponta de login por cookie
 async function cadastraPontaCookie(app, ponta) {
     console.log(`GET ${app.url}${ponta}`);
-    app.get(ponta, async (req, resp) => {
+    app.get(ponta, async(req, resp) => {
         let resposta = new Resposta(app.erros.login.logar_com_cookie, false)
         console.log("Nova requisição de login por cookie");
         console.log(req.cookies);

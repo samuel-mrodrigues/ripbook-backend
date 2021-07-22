@@ -1,4 +1,3 @@
-
 let Resposta = require("../resposta")
 
 async function cadastraPonta(app, ponta) {
@@ -11,7 +10,7 @@ async function cadastraPonta(app, ponta) {
 function cadastraGetParametro(app, ponta) {
     console.log(`GET ${app.url}${ponta}/:id`);
 
-    app.get(ponta + "/:id", async (req, resp) => {
+    app.get(ponta + "/:id", async(req, resp) => {
 
         let resposta = new Resposta(app.erros.posts)
         let postRequis = req.params.id
@@ -24,10 +23,13 @@ function cadastraGetParametro(app, ponta) {
             console.log("ID valido informado");
 
             let postDados = await app.bancodados("posts").where({ id_post: postRequis }).first()
-            let postDono = await app.bancodados("usuarios").where({ id_usuario: postDados.usuario_id }).first()
             if (postDados) {
-                resposta.addDados("post", { ...postDados })
-                resposta.addDados("postdono", { id_usuario: postDono.id_usuario, nome: postDono.nome, sobrenome: postDono.sobrenome})
+                let postDono = await app.bancodados("usuarios").where({ id_usuario: postDados.usuario_id }).first()
+                let dadosDoPost = {}
+                dadosDoPost = {...postDados }
+                dadosDoPost.autor = { id_usuario: postDono.id_usuario, nome: postDono.nome, sobrenome: postDono.sobrenome }
+
+                resposta.addDados("post", dadosDoPost)
                 resposta.SetRetornarData(true)
                 resposta.aprovada("Sucesso")
             } else {
@@ -51,29 +53,33 @@ function cadastraGetParametro(app, ponta) {
 function cadastraGet(app, ponta) {
     console.log(`GET ${app.url}${ponta}`);
 
-    app.get(ponta, async (req, resp) => {
+    app.get(ponta, async(req, resp) => {
         console.log("Novo GET de posts");
+        let resposta = new Resposta(app.erros.posts, true)
 
         let posts = await app.bancodados("posts")
-        // console.log(posts);
+            // console.log(posts);
 
-        let resposta = []
+        let listaDePosts = []
         for (const key in posts) {
             if (Object.hasOwnProperty.call(posts, key)) {
                 const post = posts[key];
 
-                resposta.push({ ...post })
+                listaDePosts.push({...post })
             }
         }
 
-        console.log(resposta);
-        resp.send(resposta)
+        resposta.SetRetornarData(true)
+        resposta.addDados("posts", listaDePosts)
+        resposta.aprovada("Sucesso")
+
+        resp.send(resposta.getResposta())
     })
 }
 
 function cadastraPost(app, ponta) {
     console.log(`POST ${app.url}${ponta}`);
-    app.post(ponta, async (req, resp) => {
+    app.post(ponta, async(req, resp) => {
         console.log("Nova request de postagem!");
 
         let resposta = new Resposta(app.erros.posts, false)

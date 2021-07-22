@@ -1,4 +1,5 @@
 // Cadastro
+const { response } = require("express")
 const cadastro = require("./cadastro/cadastro.js")
 const login = require("./login/login.js")
 const logout = require("./login/logout")
@@ -16,7 +17,8 @@ async function carregarPontas(app) {
         console.log(req.method);
         console.log("--------------------");
 
-        res.setHeader('Access-Control-Allow-Origin', 'http://192.168.1.98:8080');
+        // res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.103:8080');
+        res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.101:8080');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
         res.setHeader('Access-Control-Allow-Credentials', true);
@@ -50,11 +52,11 @@ async function carregarPontas(app) {
     console.log("Carregando pontas...");
     // Cadastrar usuario
     cadastro.cadastraPonta(app, url + "/login/cadastro")
-    // Logar usuario
+        // Logar usuario
     login.cadastraPontaLogin(app, url + "/login/logar")
-    // Login por cookie
+        // Login por cookie
     login.cadastraPontaCookie(app, url + "/login/logar/cookie")
-    // Logout
+        // Logout
     logout.cadastrarPonta(app, url + "/login/logout")
 
     // Postar algo/Pegar algum post/Posts
