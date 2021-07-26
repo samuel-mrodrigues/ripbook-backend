@@ -9,8 +9,8 @@ const { isStringVazio } = require("../../utilidades/validacoesBasicas")
 let Resposta = require("../resposta")
 
 async function cadastraPonta(app, ponta) {
-    console.log(`POST ${app.url}${ponta}`);
-    app.post(ponta, async (req, resp) => {
+    console.log(`POST ${ponta}`);
+    app.post(ponta, async(req, resp) => {
         let resposta = new Resposta(app.erros.login.cadastro, false)
 
         console.log("Nova request para cadastro!");
@@ -23,7 +23,7 @@ async function cadastraPonta(app, ponta) {
         //Status do cadastro:
         // 0: Cadastro aprovado
         // 1: Cadastro negado
-        let dados = { ...req.body }
+        let dados = {...req.body }
         console.log(dados);
 
         // Validação dos campos

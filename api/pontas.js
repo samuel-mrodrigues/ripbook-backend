@@ -5,11 +5,13 @@ const login = require("./login/login.js")
 const logout = require("./login/logout")
 
 const posts = require("./posts/post")
+const curtir = require("./posts/curtir")
+const descurtir = require("./posts/descurtir")
 
 async function carregarPontas(app) {
     let url = app.url
 
-    // Ponte mestre. 
+    // Ponte mestre. Realizar a checagem de sessão
     app.use(async function(req, res, next) {
         console.log("Nova request para o backend...");
 
@@ -18,7 +20,7 @@ async function carregarPontas(app) {
         console.log("--------------------");
 
         // res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.103:8080');
-        res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.101:8080');
+        res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.102:8080');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
         res.setHeader('Access-Control-Allow-Credentials', true);
@@ -59,8 +61,12 @@ async function carregarPontas(app) {
         // Logout
     logout.cadastrarPonta(app, url + "/login/logout")
 
-    // Postar algo/Pegar algum post/Posts
+    // Posts
     posts.cadastraPonta(app, url + "/posts")
+        // Curtir posts
+    curtir.cadastraPonta(app, url + "/posts/:id/curtir")
+        // Descurtir post
+    descurtir.cadastraPonta(app, url + "/posts/:id/descurtir")
 }
 
 module.exports = { carregarPontas }

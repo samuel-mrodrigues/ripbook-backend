@@ -1,7 +1,7 @@
 let Resposta = require("../resposta")
 
 async function cadastrarPonta(app, ponta) {
-    console.log(`POST ${app.url}${ponta}`);
+    console.log(`POST ${ponta}`);
 
     app.post(ponta, async(req, resp) => {
         console.log("Nova request de logout!");

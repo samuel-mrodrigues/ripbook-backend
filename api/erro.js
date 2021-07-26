@@ -3,10 +3,7 @@ class Erro {
     mensagens = {}
 
     constructor(mensagens) {
-        console.log("Novo construção de erro");
         this.mensagens = mensagens
-
-        console.log("Criando um novo campo de erros");
     }
 
     addErro(novoErro) {

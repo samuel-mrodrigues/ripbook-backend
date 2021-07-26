@@ -8,7 +8,7 @@ let Resposta = require("../resposta")
 
 // Ponta de login por dados do formulario
 async function cadastraPontaLogin(app, ponta) {
-    console.log(`POST ${app.url}${ponta}`);
+    console.log(`POST ${ponta}`);
 
     app.post(ponta, async(req, resp) => {
         let resposta = new Resposta(app.erros.login.logar, false)
@@ -92,7 +92,7 @@ async function cadastraPontaLogin(app, ponta) {
 
 // Ponta de login por cookie
 async function cadastraPontaCookie(app, ponta) {
-    console.log(`GET ${app.url}${ponta}`);
+    console.log(`GET ${ponta}`);
     app.get(ponta, async(req, resp) => {
         let resposta = new Resposta(app.erros.login.logar_com_cookie, false)
         console.log("Nova requisição de login por cookie");
@@ -129,9 +129,9 @@ async function cadastraPontaCookie(app, ponta) {
                 resposta.recusada("A sessão solicitada não existe.")
             }
         } else {
-            // Erro por nao ter o cookie na requisição
-            resposta.addErro(3)
-            resposta.recusada("Sessão não informada na requisição")
+            // Erro por nao ter o cookie na requisição.
+            resposta.addErro(1)
+            resposta.recusada("Sessão invalida")
         }
 
         resp.send(resposta.getResposta())

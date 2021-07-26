@@ -8,7 +8,7 @@ async function cadastraPonta(app, ponta) {
 
 
 function cadastraGetParametro(app, ponta) {
-    console.log(`GET ${app.url}${ponta}/:id`);
+    console.log(`GET ${ponta}/:id`);
 
     app.get(ponta + "/:id", async(req, resp) => {
 
@@ -25,9 +25,12 @@ function cadastraGetParametro(app, ponta) {
             let postDados = await app.bancodados("posts").where({ id_post: postRequis }).first()
             if (postDados) {
                 let postDono = await app.bancodados("usuarios").where({ id_usuario: postDados.usuario_id }).first()
+                let postCurtidas = await app.bancodados("curtidas").where({ post_id: postDados.id_post })
+
                 let dadosDoPost = {}
                 dadosDoPost = {...postDados }
                 dadosDoPost.autor = { id_usuario: postDono.id_usuario, nome: postDono.nome, sobrenome: postDono.sobrenome }
+                dadosDoPost.curtidas = {...postCurtidas }
 
                 resposta.addDados("post", dadosDoPost)
                 resposta.SetRetornarData(true)
@@ -51,7 +54,7 @@ function cadastraGetParametro(app, ponta) {
 }
 
 function cadastraGet(app, ponta) {
-    console.log(`GET ${app.url}${ponta}`);
+    console.log(`GET ${ponta}`);
 
     app.get(ponta, async(req, resp) => {
         console.log("Novo GET de posts");
@@ -78,7 +81,7 @@ function cadastraGet(app, ponta) {
 }
 
 function cadastraPost(app, ponta) {
-    console.log(`POST ${app.url}${ponta}`);
+    console.log(`POST ${ponta}`);
     app.post(ponta, async(req, resp) => {
         console.log("Nova request de postagem!");
 

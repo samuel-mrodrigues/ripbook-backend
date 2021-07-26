@@ -43,9 +43,6 @@ module.exports = {
             },
             2: {
                 mensagem: "Sessão expirada"
-            },
-            3: {
-                mensagem: "Nenhum cookie de sessão recebido"
             }
         },
         logout: {
@@ -60,12 +57,40 @@ module.exports = {
         },
         2: {
             mensagem: "É necessario estar logado para realizar essa ação"
-        }, 
+        },
         3: {
             mensagem: "O ID do post requisitado precisa ser numerico"
         },
         4: {
             mensagem: "Post requisitado não existe"
+        }
+    },
+    curtir: {
+        1: {
+            mensagem: "O ID do post precisa ser numerico"
+        },
+        2: {
+            mensagem: "É necessario ter uma sessão para curtir posts"
+        },
+        3: {
+            mensagem: "Post informado não existe."
+        },
+        4: {
+            mensagem: "Post já curtido pelo usuario"
+        }
+    },
+    descurtir: {
+        1: {
+            mensagem: "O ID do post precisa ser numerico"
+        },
+        2: {
+            mensagem: "É necessario ter uma sessão para descurtir posts"
+        },
+        3: {
+            mensagem: "Post informado não existe."
+        },
+        4: {
+            mensagem: "Post não esta curtido pelo usuario"
         }
     }
 }
