@@ -11,37 +11,37 @@ function cadastraPostCurtir(app, ponta) {
         let resposta = new Resposta(app.erros.curtir, false)
 
         let postCurtido = req.params.id
-            // if (req.sessao) {
+        if (req.login) {
 
-        if (!isNaN(postCurtido)) {
-            let postDados = await app.bancodados("posts").where({ id_post: postCurtido }).first()
+            if (!isNaN(postCurtido)) {
+                let postDados = await app.bancodados("posts").where({ id_post: postCurtido }).first()
 
-            if (postDados) {
-                let curtidaDados = await app.bancodados("curtidas").where({ post_id: postCurtido, usuario_id: req.sessao.usuario.id_usuario }).first()
+                if (postDados) {
+                    let curtidaDados = await app.bancodados("posts_curtidas").where({ post_id: postCurtido, usuario_id: req.login.usuario.id_usuario }).first()
 
-                if (!curtidaDados) {
-                    console.log("Post ainda n foi curtido");
-                    await app.bancodados("curtidas").insert({ usuario_id: req.sessao.usuario.id_usuario, post_id: postCurtido })
-                    console.log("Curtido");
+                    if (!curtidaDados) {
+                        console.log("Post ainda n foi curtido");
+                        await app.bancodados("posts_curtidas").insert({ usuario_id: req.login.usuario.id_usuario, post_id: postCurtido })
+                        console.log("Curtido");
 
-                    resposta.aprovada("Sucesso")
+                        resposta.aprovada("Sucesso")
+                    } else {
+                        console.log("Já curtiu o post");
+                        resposta.addErro(4)
+                        resposta.recusada("Ação não permitida")
+                    }
                 } else {
-                    console.log("Já curtiu o post");
-                    resposta.addErro(4)
-                    resposta.recusada("Ação não permitida")
+                    resposta.addErro(3)
+                    resposta.recusada("Post para dar like não existe")
                 }
             } else {
-                resposta.addErro(3)
-                resposta.recusada("Post para dar like não existe")
+                resposta.addErro(1)
+                resposta.recusada("Dados informados invalidos")
             }
         } else {
-            resposta.addErro(1)
-            resposta.recusada("Dados informados invalidos")
+            resposta.addErro(2)
+            resposta.recusada("Usuario não possui sessão")
         }
-        // } else {
-        //     resposta.addErro(2)
-        //     resposta.recusada("Usuario não possui sessão")
-        // }
 
         resp.send(resposta.getResposta())
     })

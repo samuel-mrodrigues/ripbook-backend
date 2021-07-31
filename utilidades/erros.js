@@ -92,5 +92,22 @@ module.exports = {
         4: {
             mensagem: "Post não esta curtido pelo usuario"
         }
+    },
+    comentarios: {
+        1: {
+            mensagem: "O ID do post precisa ser numerico"
+        },
+        2: {
+            mensagem: "É necessario ter uma sessão"
+        },
+        3: {
+            mensagem: "Post informado não existe."
+        },
+        4: {
+            mensagem: "Post não esta curtido pelo usuario"
+        },
+        5: {
+            mensagem: "Comentario não informado"
+        }
     }
 }

@@ -98,8 +98,8 @@ async function cadastraPontaCookie(app, ponta) {
         console.log("Nova requisição de login por cookie");
         console.log(req.cookies);
 
-        if (req.sessao != undefined) {
-            let cookieSessao = req.sessao.sessao.sessao_id;
+        if (req.login != undefined) {
+            let cookieSessao = req.login.sessao.sessao_id;
             console.log("Existe um cookie de sessãoID: " + cookieSessao);
 
             console.log("Verificando se essa sessão ainda é valida");

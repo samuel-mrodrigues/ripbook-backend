@@ -6,7 +6,7 @@ async function cadastrarPonta(app, ponta) {
     app.post(ponta, async(req, resp) => {
         console.log("Nova request de logout!");
         let resposta = new Resposta(app.erros.login.logout, false)
-        let sessaoUsuario = req.sessao.sessao.sessao_id
+        let sessaoUsuario = req.login.sessao.sessao_id
 
         let existe = await app.bancodados("sessoes").where({ sessao_id: sessaoUsuario }).first()
         console.log(existe);

@@ -11,17 +11,17 @@ function cadastraPostDescurtir(app, ponta) {
         let resposta = new Resposta(app.erros.descurtir, false)
 
         let postCurtido = req.params.id
-            // if (req.sessao) {
+            // if (req.login) {
 
         if (!isNaN(postCurtido)) {
             let postDados = await app.bancodados("posts").where({ id_post: postCurtido }).first()
 
             if (postDados) {
-                let curtidaDados = await app.bancodados("curtidas").where({ post_id: postCurtido, usuario_id: req.sessao.usuario.id_usuario }).first()
+                let curtidaDados = await app.bancodados("posts_curtidas").where({ post_id: postCurtido, usuario_id: req.login.sessao.usuario_id }).first()
 
                 if (curtidaDados) {
                     console.log("Post ainda n foi descurtido");
-                    await app.bancodados("curtidas").delete({ usuario_id: req.sessao.usuario.id_usuario, post_id: postCurtido })
+                    await app.bancodados("posts_curtidas").delete().where({ post_id: postCurtido, usuario_id: req.login.sessao.usuario_id })
                     console.log("Descurtido");
 
                     resposta.aprovada("Sucesso")

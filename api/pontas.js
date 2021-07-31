@@ -7,6 +7,7 @@ const logout = require("./login/logout")
 const posts = require("./posts/post")
 const curtir = require("./posts/curtir")
 const descurtir = require("./posts/descurtir")
+const comentarios = require("./posts/comentarios")
 
 async function carregarPontas(app) {
     let url = app.url
@@ -39,7 +40,7 @@ async function carregarPontas(app) {
                 console.log(dadosSessao);
 
                 if (dadosSessao) {
-                    req.sessao = dadosSessao;
+                    req.login = dadosSessao;
                     console.log("Cookie de sessão valida. Incluindo sessão na request para outras pontas..");
                 } else {
                     console.log("Cookie de sessão não existe/invalido. Não adicionando na request a sessão...");
@@ -67,6 +68,8 @@ async function carregarPontas(app) {
     curtir.cadastraPonta(app, url + "/posts/:id/curtir")
         // Descurtir post
     descurtir.cadastraPonta(app, url + "/posts/:id/descurtir")
+        // Comentar posts
+    comentarios.cadastraPonta(app, url + "/posts/:id/comentario")
 }
 
 module.exports = { carregarPontas }
