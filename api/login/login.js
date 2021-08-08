@@ -92,8 +92,8 @@ async function cadastraPontaLogin(app, ponta) {
 
 // Ponta de login por cookie
 async function cadastraPontaCookie(app, ponta) {
-    console.log(`GET ${ponta}`);
-    app.get(ponta, async(req, resp) => {
+    console.log(`POST ${ponta}`);
+    app.post(ponta, async(req, resp) => {
         let resposta = new Resposta(app.erros.login.logar_com_cookie, false)
         console.log("Nova requisição de login por cookie");
         console.log(req.cookies);
@@ -117,6 +117,15 @@ async function cadastraPontaCookie(app, ponta) {
 
                 if (dataSessao.getTime() >= dataAgora.getTime()) {
                     console.log("A sessão ainda é valida! Permitindo o login.");
+                    resposta.SetRetornarData(true)
+                    let userInfo = req.login.usuario
+
+                    resposta.addDados('info_usuario', {
+                        nome: userInfo.nome,
+                        sobrebome: userInfo.sobrenome,
+                        email: userInfo.email
+                    })
+
                     resposta.aprovada("Login por cookie aprovado")
                 } else {
                     console.log("Sessão expirada!");
