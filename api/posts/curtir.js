@@ -25,6 +25,22 @@ function cadastraPostCurtir(app, ponta) {
                         console.log("Curtido");
 
                         resposta.aprovada("Sucesso")
+
+                        console.log("Notificar o WS..");
+                        app.teste({
+                            tipo: 'atualizarPostagem',
+                            postId: postDados.id_post
+                        })
+
+                        // Mandar nodificação pro dono do post, e verificar se não é o proprio dono curtindo
+                        if (req.login.sessao.usuario_id != postDados.usuario_id) {
+                            app.teste({
+                                tipo: 'notificacao',
+                                titulo: 'Nova curtida',
+                                conteudo: `${req.login.usuario.nome} curtiu o seu post`,
+                                usuarioReceber: postDados.usuario_id
+                            })
+                        }
                     } else {
                         console.log("Já curtiu o post");
                         resposta.addErro(4)

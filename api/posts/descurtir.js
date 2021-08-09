@@ -25,6 +25,21 @@ function cadastraPostDescurtir(app, ponta) {
                     console.log("Descurtido");
 
                     resposta.aprovada("Sucesso")
+                    console.log("Notificar o WS..");
+                    app.teste({
+                        tipo: 'atualizarPostagem',
+                        postId: postDados.id_post
+                    })
+
+                    // Mandar nodificação pro dono do post, e verificar se não é o proprio dono curtindo
+                    if (req.login.sessao.usuario_id != postDados.usuario_id) {
+                        app.teste({
+                            tipo: 'notificacao',
+                            titulo: 'Nova descurtida',
+                            conteudo: `${req.login.usuario.nome} descurtiu o seu post :(`,
+                            usuarioReceber: postDados.usuario_id
+                        })
+                    }
                 } else {
                     console.log("Nao tem curtida nesse post");
                     resposta.addErro(4)

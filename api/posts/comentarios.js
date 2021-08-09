@@ -27,6 +27,21 @@ function cadastraPostComentarios(app, ponta) {
                     if (postDados) {
                         await app.bancodados("posts_comentarios").insert({ usuario_id: req.login.sessao.usuario_id, post_id: postComentado, comentario: comentario })
                         resposta.aprovada("Comentado com sucesso")
+                        console.log("Notificar o WS..");
+                        app.teste({
+                            tipo: 'atualizarPostagem',
+                            postId: postDados.id_post
+                        })
+
+                        // Mandar nodificação pro dono do post, e verificar se não é o proprio dono curtindo
+                        if (req.login.sessao.usuario_id != postDados.usuario_id) {
+                            app.teste({
+                                tipo: 'notificacao',
+                                titulo: 'Novo comentario',
+                                conteudo: `${req.login.usuario.nome} fez um comentario em um post seu: ${comentario}`,
+                                usuarioReceber: postDados.usuario_id
+                            })
+                        }
                     } else {
                         resposta.addErro(3)
                         resposta.recusada("Post não existe")

@@ -14,11 +14,6 @@ async function carregarPontas(app) {
 
     // Ponte mestre. Realizar a checagem de sessão
     app.use(async function(req, res, next) {
-        console.log("Nova request para o backend...");
-
-        console.log("[Inicio da request]");
-        console.log(req.method);
-        console.log("--------------------");
 
         // res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.103:8080');
         res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.102:8080');
@@ -28,25 +23,14 @@ async function carregarPontas(app) {
 
         // Se não for uma request preflight, faz a verificação da sessão
         if (req.method != "OPTIONS") {
-            console.log("Efetuando checagem de sessão....");
-
             let cookies = req.cookies
-            console.log(cookies);
             if (cookies.sessaoID != undefined) {
+
                 let sessaoID = cookies.sessaoID
-                console.log("Cookie de sessão da request: " + sessaoID);
-
                 let dadosSessao = await app.sessao.getDadosUsuario(sessaoID)
-                console.log(dadosSessao);
-
                 if (dadosSessao) {
                     req.login = dadosSessao;
-                    console.log("Cookie de sessão valida. Incluindo sessão na request para outras pontas..");
-                } else {
-                    console.log("Cookie de sessão não existe/invalido. Não adicionando na request a sessão...");
                 }
-            } else {
-                console.log("Request nao tem cookies de sessão..");
             }
         }
         next();

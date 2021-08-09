@@ -14,12 +14,8 @@ function cadastraGetParametro(app, ponta) {
         let resposta = new Resposta(app.erros.posts)
         let postRequis = req.params.id
 
-        console.log(req.login);
-
-        console.log(resposta);
         if (req.login != undefined) {
             if (!isNaN(postRequis)) {
-                console.log("ID valido informado");
 
                 let postDados = await app.bancodados("posts").where({ id_post: postRequis }).first()
                 if (postDados) {
@@ -36,7 +32,6 @@ function cadastraGetParametro(app, ponta) {
                         comentario.autor = { nome: autorComentario.nome, sobrenome: autorComentario.sobrenome }
                     }
 
-                    console.log(postComentarios);
 
                     let dadosDoPost = {}
                     dadosDoPost = { id_post: postDados.id_post, conteudo_post: postDados.conteudo_post }
@@ -53,7 +48,7 @@ function cadastraGetParametro(app, ponta) {
                     resposta.recusada("Post solicitado não existe")
                 }
             } else {
-                console.log("Erro, ID informado não é um numero");
+
                 resposta.addErro(1)
                 resposta.recusada("Dados informados invalidos")
             }
@@ -70,11 +65,9 @@ function cadastraGet(app, ponta) {
     console.log(`GET ${ponta}`);
 
     app.get(ponta, async(req, resp) => {
-        console.log("Novo GET de posts");
         let resposta = new Resposta(app.erros.posts, true)
 
         let posts = await app.bancodados("posts")
-            // console.log(posts);
 
         let listaDePosts = []
         for (const key in posts) {
@@ -96,14 +89,12 @@ function cadastraGet(app, ponta) {
 function cadastraPost(app, ponta) {
     console.log(`POST ${ponta}`);
     app.post(ponta, async(req, resp) => {
-        console.log("Nova request de postagem!");
 
         let resposta = new Resposta(app.erros.posts, false)
         let dados = req.body
         let cookieSessao = req.cookies.sessaoID
 
         if (estaVazio(dados.comentario)) {
-            console.log("Campo de post não validado");
             resposta.addErro(1)
             resposta.recusada("Solicitação faltando parametros...")
         }
@@ -112,10 +103,18 @@ function cadastraPost(app, ponta) {
         if (totalErros == 0) {
             let userData = await app.sessao.getDadosUsuario(cookieSessao);
             let postagem = await app.bancodados("posts").insert({ usuario_id: userData.sessao.usuario_id, conteudo_post: dados.comentario })
-            console.log(postagem);
 
             if (postagem != undefined) {
                 resposta.aprovada("Postagem concluida")
+                console.log("Notificar o WS..");
+                app.teste({
+                    tipo: 'atualizarPostagens'
+                })
+                app.teste({
+                    tipo: 'notificacao',
+                    titulo: "Nova postagem",
+                    conteudo: "Novos posts, de uma olhada ;)"
+                })
             } else {
                 resposta.recusada("Erro interno")
             }
