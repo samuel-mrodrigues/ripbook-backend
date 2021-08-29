@@ -4,7 +4,7 @@ class Resposta {
     // Dados retornado no objeto .dados
     dados = {}
 
-    // Objeto de erros
+    // Objeto de er
     erros = {}
 
     // Status
